@@ -16,27 +16,32 @@ class Gameboard {
   swapTurn() {
     if (this.currentPlayer == this.player1) {
       return (this.currentPlayer = this.player2);
-    } else return (this.currentPlayer = this.player1);
+    } else {
+      //  instructions.innerHTML = `Its's your turn ${this.currentPlayer.name}, your shape is ${this.currentPlayer.shape}`
+      return (this.currentPlayer = this.player1);
+    }
   }
 
-  playerSelection(shape, index) {
+  gamePlay(shape, index) {
+    if (!this.gameOver) {
     if (!this.board[index]) {
       this.board[index] = shape;
       board.children[index].innerHTML = shape;
       this.currentPlayer.selectedCells.push(index);
       if (this.endGame() == this.currentPlayer.name) {
-        alert(`${this.currentPlayer.name} Wins`)
-        this.startNewGame()
+        return instructions.innerHTML = `Congratulations!!! ${this.currentPlayer.name}, You Win`;
       } else if (this.endGame() == 'draw') {
-        alert('The game is a draw')
-        this.startNewGame();
+        return instructions.innerHTML = `What a bore, Hit Restart`;
       }
-      // console.log(this.endGame());
-      // this.drawGame();
-      this.swapTurn();
+
+      this.swapTurn()
+      instructions.innerHTML = `It's your turn ${this.currentPlayer.name}, your shape is ${this.currentPlayer.shape}`;
+      
     } else {
       alert("Select an empty cell");
     }
+  }
+
   }
 
   startNewGame() {
@@ -65,10 +70,12 @@ class Gameboard {
       if (count == 3) {
         return this.gameOver = this.currentPlayer.name
       } else if (this.player1.selectedCells.length + this.player2.selectedCells.length == 9) {
+        // instructions.innerHTML = `What a bore, Hit Restart`;
         return this.gameOver = 'draw'
       } 
     }
   }
+  
 }
 
 const game = new Gameboard();
@@ -86,11 +93,25 @@ game.board.forEach((cell, index) => {
 });
 
 let instructions = document.querySelector(".instructions");
+instructions.innerHTML = `It's your turn ${game.currentPlayer.name}, your shape is ${game.currentPlayer.shape}`
+
 
 let cells = document.querySelectorAll(".col-md-4");
 
 cells.forEach((cell, index) => {
   cell.addEventListener("click", () =>
-    game.playerSelection(game.currentPlayer.shape, index)
+    game.gamePlay(game.currentPlayer.shape, index)
   );
 });
+
+const button = document.querySelector('button');
+
+button.addEventListener('click', () => startNewGame());
+
+const startNewGame = () => {
+  return window.location.reload();
+}
+
+// function startNewGame() {
+//   return window.location.reload();
+// }
