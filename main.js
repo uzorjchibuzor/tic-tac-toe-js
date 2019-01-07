@@ -33,7 +33,7 @@ class Gameboard {
       } else if (this.endGame() == 'draw') {
         return instructions.innerHTML = `What a bore, Hit Restart`;
       }
-
+      // this.checkWinner(this.endGame())
       this.swapTurn()
       instructions.innerHTML = `It's your turn ${this.currentPlayer.name}, your shape is ${this.currentPlayer.shape}`;
       
@@ -70,11 +70,20 @@ class Gameboard {
       if (count == 3) {
         return this.gameOver = this.currentPlayer.name
       } else if (this.player1.selectedCells.length + this.player2.selectedCells.length == 9) {
-        // instructions.innerHTML = `What a bore, Hit Restart`;
         return this.gameOver = 'draw'
       } 
     }
   }
+
+  // Tried to refactor out some part of the gamePlay function to make it cleaner but did not seem to work correctly
+
+  // checkWinner(value) {
+  //   if (value == this.currentPlayer.name) {
+  //     return instructions.innerHTML = `Congratulations!!! ${this.currentPlayer.name}, You Win`;
+  //   } else if (value == 'draw') {
+  //     return instructions.innerHTML = `What a bore, Hit Restart`;
+  //   }
+  // }
   
 }
 
