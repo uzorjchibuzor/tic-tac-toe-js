@@ -1,52 +1,15 @@
-const Player = (name, shape) => {
-  this.selectedCells = [];
-  (this.name = name), (this.shape = shape);
-
-  return { name, shape, selectedCells };
-};
-
-class Gameboard {
+//  Board Class
+class Board {
   constructor() {
-    this.player1 = Player(prompt("Player 1, Enter Your Name"), "X");
-    this.player2 = Player(prompt("Player 2, Enter Your Name"), "O");
-    this.currentPlayer = this.player1;
-    this.board = ["", "", "", "", "", "", "", "", ""];
-    this.gameOver = false;
+    this.options = ["", "", "", "", "", "", "", "", ""];
+    this.gameOver = false
   }
 
-  swapTurn() {
-    if (this.currentPlayer === this.player1) {
-      this.currentPlayer = this.player2;
-      return this.currentPlayer;
-    } else {
-      this.currentPlayer = this.player1;
-      return this.currentPlayer;
-    }
+  optionChosen(index, shape) {
+    this.options[index] = shape
   }
 
-  gamePlay(shape, index) {
-    if (!this.gameOver) {
-      if (!this.board[index]) {
-        this.board[index] = shape;
-        board.children[index].innerHTML = shape;
-        this.currentPlayer.selectedCells.push(index);
-        if (this.winning() == this.currentPlayer.name) {
-          instructions.innerHTML = `Congratulations!!! ${this.currentPlayer.name}, You Win`;
-          return instructions.innerHTML
-        } else if (this.drawGame() == "draw") {
-          instructions.innerHTML = "What a bore!!! Start New Game?";
-          return instructions.innerHTML
-        }
-
-        this.currentPlayer = this.swapTurn();
-         instructions.innerHTML = `It's your turn ${this.currentPlayer.name}, your shape is ${this.currentPlayer.shape}`;
-      } else {
-        alert("Select an empty cell");
-      }
-    }
-  }
-
-  winning() {
+  gameWon(playerSelections) {
     const winningCondition = [
       [0, 1, 2],
       [3, 4, 5],
@@ -61,48 +24,108 @@ class Gameboard {
     for (let combination of winningCondition) {
       let count = 0;
       for (let value of combination) {
-        if (this.currentPlayer.selectedCells.includes(value)) {
+        if (playerSelections.includes(value)) {
           count += 1;
         }
       }
       if (count === 3) {
-        this.gameOver = true;
-        return this.currentPlayer.name;
+        this.gameOver = true
+        return this.gameOver
       }
     }
   }
 
-  drawGame() {
-    if (!this.winning() &&
-      this.player1.selectedCells.length + this.player2.selectedCells.length == 9) {
+  gameDrawn(selection1, selection2) {
+    if ((selection1 + selection2) === 9) {
       this.gameOver = true
-      return 'draw'
+      return this.gameOver
     }
   }
-
 }
 
-const game = new Gameboard();
+//  Player Class
 
-let board = document.querySelector(".row");
+class Player {
+  constructor(name, shape) {
+  this.selectedCells = []
+  this.name = name
+  this.shape = shape
+  }
 
-game.board.forEach((cell, index) => {
-  let div = document.createElement("div");
-  div.innerHTML = cell;
-  div.id = index;
-  div.classList = "col-md-4";
-  board.appendChild(div);
-});
+  recordOption(index) {
+    this.selectedCells.push(index)
+  }
+}
+
+const player1 = new Player(prompt('Enter Your Name, Player 1'), 'X')
+const player2 = new Player(prompt('Enter Your Name, Player 2'), 'O')
+
+let currentPlayer = player1
+
+const layout = document.querySelector(".row");
+
+const gameBoard = new Board()
+
+gameBoard.options.forEach((option, index) => {
+  let div = document.createElement("div")
+  div.innerHTML = option
+  div.id = index
+  div.className = "col-md-4"
+  layout.appendChild(div)
+})
 
 let instructions = document.querySelector(".instructions");
-instructions.innerHTML = `It's your turn ${
-  game.currentPlayer.name
-}, your shape is ${game.currentPlayer.shape}`;
 
-let cells = document.querySelectorAll(".col-md-4");
+instructions.innerHTML = `It's your turn ${currentPlayer.name}, your shape is ${currentPlayer.shape}`
+
+const swapTurn = (current, first, second) => {
+  return current = (current == first) ? second : first
+}
+
+const cells = document.querySelectorAll(".col-md-4");
 
 cells.forEach((cell, index) => {
-  cell.addEventListener("click", () =>
-    game.gamePlay(game.currentPlayer.shape, index)
-  );
+  cell.addEventListener("click", () => {
+    gamePlay(cell, index)
+  });
 });
+
+const gamePlay = (cell, index) => {
+  if (!gameBoard.gameOver) {
+  if (cell.innerHTML === '') {
+    currentPlayer.recordOption(index)
+    gameBoard.optionChosen(index, currentPlayer.shape)
+    cell.innerHTML = currentPlayer.shape
+    if (gameBoard.gameWon(currentPlayer.selectedCells)) {
+      instructions.innerHTML = `Congratulations!!! ${currentPlayer.name}, You Win. Start New Game?`
+      return instructions.innerHTML      
+    } else if (gameBoard.gameDrawn(player1.selectedCells.length, player2.selectedCells.length)) {
+      instructions.innerHTML = "What a bore!!! Start New Game?"
+      return instructions.innerHTML
+    } 
+    console.log(gameBoard.gameOver);
+    currentPlayer = swapTurn(currentPlayer, player1, player2)
+    instructions.innerHTML = `It's your turn ${currentPlayer.name}, your shape is ${currentPlayer.shape}`
+  } else {
+    instructions.innerHTML = `That cell is already chosen ${currentPlayer.name}, Please select an empty cell`
+}
+} 
+}
+
+
+const startGame = () => {
+  cells.forEach(cell => {
+    cell.innerHTML = ''
+    gameBoard.options = ['', '', '', '', '', '', '', '', '']
+    gameBoard.gameOver = false
+    player1.selectedCells = []
+    player2.selectedCells = []
+    currentPlayer = player1
+    instructions.innerHTML = `It's your turn ${currentPlayer.name}, your shape is ${currentPlayer.shape}`
+  })
+}
+
+// Restart Button
+
+document.querySelector('button').addEventListener('click', () => startGame())
+
