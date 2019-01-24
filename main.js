@@ -1,7 +1,7 @@
 //  Board Class
 class Board {
   constructor() {
-    this.options = ["", "", "", "", "", "", "", "", ""];
+    this.options = new Array(9).fill('')
     this.gameOver = false
   }
 
@@ -103,7 +103,6 @@ const gamePlay = (cell, index) => {
       instructions.innerHTML = "What a bore!!! Start New Game?"
       return instructions.innerHTML
     } 
-    console.log(gameBoard.gameOver);
     currentPlayer = swapTurn(currentPlayer, player1, player2)
     instructions.innerHTML = `It's your turn ${currentPlayer.name}, your shape is ${currentPlayer.shape}`
   } else {
@@ -116,7 +115,7 @@ const gamePlay = (cell, index) => {
 const startGame = () => {
   cells.forEach(cell => {
     cell.innerHTML = ''
-    gameBoard.options = ['', '', '', '', '', '', '', '', '']
+    gameBoard.options = new Array(9).fill('')
     gameBoard.gameOver = false
     player1.selectedCells = []
     player2.selectedCells = []
