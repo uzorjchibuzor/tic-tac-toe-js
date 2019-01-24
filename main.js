@@ -79,7 +79,7 @@ let instructions = document.querySelector(".instructions");
 instructions.innerHTML = `It's your turn ${currentPlayer.name}, your shape is ${currentPlayer.shape}`
 
 const swapTurn = (current, first, second) => {
-  return current = (current == first) ? second : first
+  return current = (current === first) ? second : first
 }
 
 const cells = document.querySelectorAll(".col-md-4");
